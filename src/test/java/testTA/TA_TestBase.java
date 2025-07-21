@@ -6,9 +6,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import utils.Constants;
+import utils.CookieHandler;
+import utils.PopupHandler;
 
-import static com.codeborne.selenide.Selenide.closeWebDriver;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 public class TA_TestBase {
     @BeforeClass(alwaysRun = true)
@@ -22,9 +23,14 @@ public class TA_TestBase {
 
         Configuration.timeout = 5000;
         open(Constants.TA_URL);
+        PopupHandler.closePopupIfPresent();
+
         WebDriverRunner.getWebDriver().manage().window().maximize();
+        CookieHandler.acceptCookieIfVisible();
         Configuration.reportsFolder = "allure-results";
     }
+
+
 
     @AfterClass(alwaysRun = true)
     public void tearDown() {
