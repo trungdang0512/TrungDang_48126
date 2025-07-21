@@ -1,1 +1,63 @@
-# selenium-java-level2-09072025
+## TESTARCHITEST AUTOMATION REPOSITORY
+
+## Summary
+This repository is used to test the [Demo-TestArchitest](https://demo.testarchitect.com/) website
+
+## Prerequisites
+
+### Application
+IntelliJ IDEA Community Edition (download here: https://www.jetbrains.com/idea/download/?section=windows)
++ Should be used because this is the application that wrote this repository
++ Other IDEAs can be used, but installation and usage will be slightly different
+
+### Environments
++ Java 17 (download here: https://www.java.com/download/ie_manual.jsp)
++ Maven (visit here: https://mvnrepository.com/)
++ TestNG (visit here: https://mvnrepository.com/artifact/org.testng/testng)
++ Selenide (download here: https://selenide.org/2024/09/15/selenide-7.5.0/)
+
+## How to run the code
+1. Download source code (location, unzip,...)
+2. Open IntelliJ IDEA. ```File``` -> ```Open``` -> ```Select file``` -> ```New Window``` or ```This Window```
+3. Wait for dependencies to be installed (reimport if needed)
+4. Make sure that at least the following plugins are imported: ```testNG```, ```lombok```
+5. Make sure the browser is on the correct version (updated if the version is too old)
+6. Run tests by commandline or using UI
+
+### Run tests with Maven from the Command Line
+- Run all TCs with specific Browser:
+  ```mvn test -Dbrowser=#browser```
+
+- Run tests with 'testng.xml' file:
+  ```mvn clean test -Dbrowser=#browser```
+
+- Run a specific class with specific Browser:
+  ```mvn test -Dtest=SampleTest -Dbrowser=#browser```
+
+- Run a method in a class with specific Browser:
+  ```mvn test -Dtest=SampleTest#methodName -Dbrowser=#browser```
+
+- Run with custom profile:
+  ```mvn test -PprofileName```
+
+## How to get the results
+1. Run tests by commandline or using UI
+2. After running the program, point to the current project
+3. Enter '''allure serve allure-results''' into the Terminal and then press Enter
+4. You should see the results like this:
+
+   ![allure_results_samp!](src/main/resources/Sample_Allure_Results.png)
+5. You can visit the result website to get more information
+
+## Project Structure
+**\src\main\java\auto: contain constructor, pages
+
+**\src\test\java\auto: contain test cases
+
+**\src\main\resources: contain data, config file
+
+### The features are applied
++ Github: Gitflow
++ Configuration: pom.xml: Dependencies, Commandline
++ Code: Name convention, OOP, Json, Data driven
++ Report: Allure report

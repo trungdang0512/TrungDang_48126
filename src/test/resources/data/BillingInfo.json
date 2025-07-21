@@ -1,0 +1,30 @@
+{
+  "validBilling": {
+    "firstName": "Trung",
+    "lastName": "Dang",
+    "companyName": "AgestVN",
+    "country": "Vietnam",
+    "address1": "Viettin Bank Building, 37 Tran Quoc Toan street",
+    "address2": "Agest Danang Branch, 21st Floor",
+    "city": "Danang",
+    "state": "",
+    "postCode": "550000",
+    "phone": "0793897616",
+    "email": "vantrung0512@gmail.com",
+    "orderComments": ""
+  },
+  "missingInfoBilling": {
+    "firstName": "",
+    "lastName": "Dang",
+    "companyName": "AgestVN",
+    "country": "Vietnam",
+    "address1": "Viettin Bank Building, 37 Tran Quoc Toan street",
+    "address2": "Agest Danang Branch, 21st Floor",
+    "city": "Danang",
+    "state": "",
+    "postCode": "550000",
+    "phone": "",
+    "email": "vantrung0512@gmail.com",
+    "orderComments": ""
+  }
+}
