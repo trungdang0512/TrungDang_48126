@@ -54,4 +54,21 @@ public class OrderStatusPage extends BasePage{
                 .anyMatch(product -> product.getTitle().equals(selectedProduct.getTitle()));
     }
 
+    @Step("Verify order confirmation message")
+    public boolean checkConfirmationMessageDisplayed(){
+        orderConfirmationMessage.scrollIntoView(true);
+        return orderConfirmationMessage.isDisplayed();
+    }
+
+    @Step("Check if all selected products are displayed on Receipt")
+    public boolean checkSelectedProductsDisplayedOnReceipt(List<Product> selectedProducts, List<Product> productsOnReceipt) {
+        log.info("Purchased products list on receipt: {}" + productsOnReceipt);
+        return selectedProducts.stream()
+                .anyMatch(selectedProduct ->
+                        productsOnReceipt.stream()
+                                .anyMatch(actualProduct ->
+                                        actualProduct.getTitle().equals(selectedProduct.getTitle())
+                                )
+                );
+    }
 }

@@ -2,38 +2,37 @@ package testTA;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
+import config.BrowserConfig;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
+import pages.*;
 import utils.Constants;
-import utils.CookieHandler;
-import utils.PopupHandler;
 
 import static com.codeborne.selenide.Selenide.*;
 
 public class TA_TestBase {
+    MainPage mainPage = new MainPage();
+    LoginPage loginPage = new LoginPage();
+    ShopAndProductCategoriesPage shopAndProductCategoriesPage = new ShopAndProductCategoriesPage();
+    CartPage cartPage = new CartPage();
+    CheckOutPage checkOutPage = new CheckOutPage();
+    OrderStatusPage orderStatusPage = new OrderStatusPage();
+
     @BeforeClass(alwaysRun = true)
     @Parameters("browser")
     public void setUp(String browser) {
-        if (browser.equalsIgnoreCase("edge")) {
-            Configuration.browser = "edge";
-        } else if (browser.equalsIgnoreCase("chrome")) {
-            Configuration.browser = "chrome";
-        }
-
-        Configuration.timeout = 5000;
+        BrowserConfig.setupBrowser(browser, 5000);
         open(Constants.TA_URL);
-        PopupHandler.closePopupIfPresent();
-
         WebDriverRunner.getWebDriver().manage().window().maximize();
-        CookieHandler.acceptCookieIfVisible();
+        mainPage.closePopupMessageIfVisible();
+        mainPage.acceptCookieIfVisible();
         Configuration.reportsFolder = "allure-results";
     }
 
-
-
     @AfterClass(alwaysRun = true)
     public void tearDown() {
+        clearBrowserCookies();
         closeWebDriver();
     }
 }

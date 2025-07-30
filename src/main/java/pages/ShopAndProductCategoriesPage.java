@@ -5,12 +5,11 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import models.Product;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import utils.WaitUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -30,18 +29,19 @@ public class ShopAndProductCategoriesPage extends BasePage{
     @Step("Switch view to list")
     public void switchViewToList(){
         actions().moveToElement(listViewSwitchBtn).click().perform();
+        WaitUtils.waitForUrlChange(20);
     }
 
     @Step("Check items displayed as grid view")
     public boolean checkGridView(){
         String classAttr = gridViewSwitchBtn.getAttribute("class");
-        return classAttr != null && classAttr.contains("switcher-active");
+        return Objects.requireNonNull(classAttr).contains("switcher-active");
     }
 
     @Step("Check items displayed as list view")
     public boolean checkListView(){
         String classAttr = listViewSwitchBtn.getAttribute("class");
-        return classAttr != null && classAttr.contains("switcher-active");
+        return Objects.requireNonNull(classAttr).contains("switcher-active");
     }
 
     private Product getProductFromPageByIndex(int index) {
@@ -72,5 +72,12 @@ public class ShopAndProductCategoriesPage extends BasePage{
         addToCartLinkOfSelectedItem.scrollIntoView(false).click();
     }
 
+    @Step("Add multiple items to cart")
+    public void addMutipleItemsToCart(List<Product> products) {
+        log.info("Selected Products: {}" + products.toString());
+        for (Product product : products) {
+            addItemToCart(product);
+        }
+    }
 
 }

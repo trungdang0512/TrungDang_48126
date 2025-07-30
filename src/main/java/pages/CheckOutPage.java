@@ -40,6 +40,9 @@ public class CheckOutPage extends BasePage {
     private final SelenideElement errorCheckoutMessage = $x("//div[contains(@class, 'woocommerce-NoticeGroup') and contains(@class, 'woocommerce-NoticeGroup-checkout')]");
     private final ElementsCollection allFields = $$x("//div[@class='woocommerce-billing-fields__field-wrapper']/p");
 
+    private final SelenideElement bankTransferRadio = $x("//input[@id='payment_method_bacs' and @type='radio']");
+    private final SelenideElement checkPaymentRadio = $x("//input[@id='payment_method_cheque' and @type='radio']");
+    private final SelenideElement codRadio = $x("//input[@id='payment_method_cod' and @type='radio']");
 
     @Step("Check Checkout Page displays")
     public boolean isCheckoutPage() {
@@ -169,5 +172,20 @@ public class CheckOutPage extends BasePage {
     public void clickOnPlaceOrderBtnAndWait() {
         placeOrderBtn.scrollIntoView(false).click();
         WaitUtils.waitForUrlChange(60);
+    }
+
+    @Step("Select Check payment method")
+    public void selectCheckPaymentMethod() {
+        checkPaymentRadio.scrollIntoView(false).setSelected(true);
+    }
+
+    @Step("Select Bank transfer payment method")
+    public void selectBacsPaymentMethod() {
+        bankTransferRadio.scrollIntoView(false).setSelected(true);
+    }
+
+    @Step("Select COD payment method")
+    public void selectCODPaymentMethod() {
+        codRadio.scrollIntoView(false).setSelected(true);
     }
 }

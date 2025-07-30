@@ -6,6 +6,7 @@ import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import models.Product;
 import utils.WaitUtils;
+import utils.WebUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +50,21 @@ public class CartPage extends BasePage {
                 .anyMatch(product -> product.getTitle().equals(selectedProduct.getTitle()));
     }
 
+    @Step("Check if all products in list are displayed on Cart")
+    public boolean checkAddedProductsDisplayedOnCart(List<Product> selectedProducts, List<Product> actualProductsOnCart) {
+        return selectedProducts.stream()
+                .anyMatch(expectedProduct ->
+                        actualProductsOnCart.stream()
+                                .anyMatch(actualProduct ->
+                                        actualProduct.getTitle().equals(expectedProduct.getTitle()) &&
+                                                actualProduct.getPrice().equals(expectedProduct.getPrice())
+                                )
+                );
+    }
+
     @Step("Click on Checkout Button")
     public void clickOnCheckoutBtn() {
-        goToTopPage();
+        WebUtils.scrollToTop();
         WaitUtils.waitForElementToBeVisible(checkoutBtn, 10);
         WaitUtils.waitUntilClickable(checkoutBtn, 10);
         checkoutBtn.click();
