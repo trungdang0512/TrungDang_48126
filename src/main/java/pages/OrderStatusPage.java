@@ -12,8 +12,9 @@ import java.util.List;
 
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+
 @Log4j
-public class OrderStatusPage extends BasePage{
+public class OrderStatusPage extends BasePage {
     private final ElementsCollection allProductsTitleOnReceipt = $$x("//tr[contains(@class, 'order_item')]//td[contains(@class, 'product-name')]//a");
     private final ElementsCollection allProductsQuantityOnReceipt = $$x("//tr[contains(@class, 'order_item')]//td[contains(@class, 'product-name')]//strong");
     private final ElementsCollection allProductsSubTotalOnReceipt = $$x("//tr[contains(@class, 'order_item')]/td[contains(@class, 'product-total')]//bdi");
@@ -33,10 +34,10 @@ public class OrderStatusPage extends BasePage{
 
         String subTotatlText = allProductsSubTotalOnReceipt.get(index).getAttribute("textContent");
 
-        return new Product(titleText,quantityText,subTotatlText);
+        return new Product(titleText, quantityText, subTotatlText);
     }
 
-    public List<Product> getAllProductsOnReceipt(){
+    public List<Product> getAllProductsOnReceipt() {
         List<Product> productList = new ArrayList<>();
 
         int count = Math.min(allProductsTitleOnReceipt.size(), allProductsQuantityOnReceipt.size());
@@ -48,14 +49,14 @@ public class OrderStatusPage extends BasePage{
     }
 
     @Step("Check if selected product displayed on Receipt")
-    public boolean checkSelectedProductDisplayedOnReceipt(Product selectedProduct, List<Product> productsOnReceipt){
-        log.info("Purchased products list: {}"+ productsOnReceipt);
+    public boolean checkSelectedProductDisplayedOnReceipt(Product selectedProduct, List<Product> productsOnReceipt) {
+        log.info("Purchased products list: {}" + productsOnReceipt);
         return productsOnReceipt.stream()
-                .anyMatch(product -> product.getTitle().equals(selectedProduct.getTitle()));
+                .anyMatch(product -> product.equalsByTitleQuantityAndSubTotal(selectedProduct));
     }
 
     @Step("Verify order confirmation message")
-    public boolean checkConfirmationMessageDisplayed(){
+    public boolean checkConfirmationMessageDisplayed() {
         orderConfirmationMessage.scrollIntoView(true);
         return orderConfirmationMessage.isDisplayed();
     }
@@ -67,7 +68,7 @@ public class OrderStatusPage extends BasePage{
                 .anyMatch(selectedProduct ->
                         productsOnReceipt.stream()
                                 .anyMatch(actualProduct ->
-                                        actualProduct.getTitle().equals(selectedProduct.getTitle())
+                                        actualProduct.equalsByTitleQuantityAndSubTotal(selectedProduct)
                                 )
                 );
     }

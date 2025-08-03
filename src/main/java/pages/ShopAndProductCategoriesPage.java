@@ -5,6 +5,7 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import models.Product;
+import utils.Constants;
 import utils.WaitUtils;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ShopAndProductCategoriesPage extends BasePage{
     @Step("Switch view to list")
     public void switchViewToList(){
         actions().moveToElement(listViewSwitchBtn).click().perform();
-        WaitUtils.waitForUrlChange(20);
+        WaitUtils.waitForUrlChange(Constants.LONG_WAIT);
     }
 
     @Step("Check items displayed as grid view")
@@ -67,8 +68,8 @@ public class ShopAndProductCategoriesPage extends BasePage{
     @Step("Add item to cart")
     public void addItemToCart(Product product){
         SelenideElement addToCartLinkOfSelectedItem = $x(String.format(addToCartLink, product.getTitle()));
-        WaitUtils.waitForElementToBeVisible(addToCartLinkOfSelectedItem,10);
-        WaitUtils.waitUntilClickable(addToCartLinkOfSelectedItem,10);
+        WaitUtils.waitForElementToBeVisible(addToCartLinkOfSelectedItem,Constants.SHORT_WAIT);
+        WaitUtils.waitUntilClickable(addToCartLinkOfSelectedItem, Constants.SHORT_WAIT);
         addToCartLinkOfSelectedItem.scrollIntoView(false).click();
     }
 

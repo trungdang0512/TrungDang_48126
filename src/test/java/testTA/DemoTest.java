@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import pages.MainPage;
 import pages.ShopPage;
 
-public class Demo_Test extends TA_TestBase{
+public class DemoTest extends TATestBase {
     private final MainPage mainPage = new MainPage();
     private final ShopPage shopPage = new ShopPage();
 

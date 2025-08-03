@@ -11,7 +11,7 @@ import utils.Constants;
 
 import static com.codeborne.selenide.Selenide.*;
 
-public class TA_TestBase {
+public class TATestBase {
     MainPage mainPage = new MainPage();
     LoginPage loginPage = new LoginPage();
     ShopAndProductCategoriesPage shopAndProductCategoriesPage = new ShopAndProductCategoriesPage();

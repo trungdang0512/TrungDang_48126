@@ -14,6 +14,10 @@ import java.time.Duration;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class WaitUtils {
+    public static void waitForPageLoaded() {
+        waitForPageLoaded(20);
+    }
+
     public static void waitForPageLoaded(int timeoutSeconds) {
         WebDriver driver = getWebDriver();
         new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds)).until(

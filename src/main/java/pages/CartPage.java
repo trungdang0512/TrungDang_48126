@@ -5,8 +5,9 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import models.Product;
+import utils.Constants;
 import utils.WaitUtils;
-import utils.WebUtils;
+import utils.WebDriverUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class CartPage extends BasePage {
     @Step("Check if selected product displayed on Cart")
     public boolean checkAddedProductDisplayedOnCart(Product selectedProduct, List<Product> productsList) {
         return productsList.stream()
-                .anyMatch(product -> product.getTitle().equals(selectedProduct.getTitle()));
+                .anyMatch(product -> product.equalsByTitlePriceQuantityAndSubTotal(selectedProduct));
     }
 
     @Step("Check if all products in list are displayed on Cart")
@@ -55,20 +56,17 @@ public class CartPage extends BasePage {
         return selectedProducts.stream()
                 .anyMatch(expectedProduct ->
                         actualProductsOnCart.stream()
-                                .anyMatch(actualProduct ->
-                                        actualProduct.getTitle().equals(expectedProduct.getTitle()) &&
-                                                actualProduct.getPrice().equals(expectedProduct.getPrice())
-                                )
+                                .anyMatch(actualProduct -> actualProduct.equalsByTitlePriceQuantityAndSubTotal(expectedProduct))
                 );
     }
 
     @Step("Click on Checkout Button")
     public void clickOnCheckoutBtn() {
-        WebUtils.scrollToTop();
-        WaitUtils.waitForElementToBeVisible(checkoutBtn, 10);
-        WaitUtils.waitUntilClickable(checkoutBtn, 10);
+        WebDriverUtils.scrollToTop();
+        WaitUtils.waitForElementToBeVisible(checkoutBtn, Constants.MEDIUM_WAIT);
+        WaitUtils.waitUntilClickable(checkoutBtn, Constants.MEDIUM_WAIT);
         checkoutBtn.click();
-        WaitUtils.waitForPageLoaded(30);
+        WaitUtils.waitForPageLoaded(Constants.LONG_WAIT);
     }
 
 }

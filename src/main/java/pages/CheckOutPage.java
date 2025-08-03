@@ -8,7 +8,9 @@ import lombok.extern.log4j.Log4j;
 import models.BillingInfo;
 import models.Product;
 import org.openqa.selenium.By;
+import utils.Constants;
 import utils.WaitUtils;
+import utils.WebDriverUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,7 @@ public class CheckOutPage extends BasePage {
 
     @Step("Check Checkout Page displays")
     public boolean isCheckoutPage() {
-        return WebDriverRunner.getWebDriver().getCurrentUrl().contains("/checkout");
+        return WebDriverUtils.isUrlContains("/checkout");
     }
 
     private Product getProductFromOrderByIndex(int index) {
@@ -69,7 +71,7 @@ public class CheckOutPage extends BasePage {
     @Step("Check if selected product displayed on Order")
     public boolean checkSelectedProductDisplayedOnOrder(Product selectedProduct, List<Product> productsOnOrder) {
         return productsOnOrder.stream()
-                .anyMatch(product -> product.getTitle().equals(selectedProduct.getTitle()));
+                .anyMatch(product -> product.equalsByTitleQuantityAndSubTotal(selectedProduct));
     }
 
     private void enterFirstNameTextBox(String firstName) {
@@ -171,7 +173,7 @@ public class CheckOutPage extends BasePage {
     @Step("Click on PLACE ORDER")
     public void clickOnPlaceOrderBtnAndWait() {
         placeOrderBtn.scrollIntoView(false).click();
-        WaitUtils.waitForUrlChange(60);
+        WaitUtils.waitForUrlChange(Constants.LONG_WAIT);
     }
 
     @Step("Select Check payment method")

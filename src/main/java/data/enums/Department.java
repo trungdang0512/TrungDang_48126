@@ -1,6 +1,9 @@
 package data.enums;
 
-public enum Departments implements GetValueEnum{
+import lombok.Getter;
+
+@Getter
+public enum Department {
     AUTOMOBILES_MOTOCICLES("Automobiles & Motorcycles"),
     CAR_ELECTRONICS("Car Electronics"),
     MOBILE_PHONE_ACCESSORIES("Mobile Phone Accessories"),
@@ -13,16 +16,7 @@ public enum Departments implements GetValueEnum{
 
     private String value;
 
-    Departments(String value) {
+    Department(String value) {
         this.value = value;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    @Override
-    public String getValue() {
-        return value;
     }
 }

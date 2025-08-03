@@ -4,11 +4,12 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.ex.ElementNotFound;
 import com.codeborne.selenide.ex.UIAssertionError;
-import data.enums.Departments;
+import data.enums.Department;
 import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
+import utils.Constants;
 import utils.WaitUtils;
-import utils.WebUtils;
+import utils.WebDriverUtils;
 
 import java.time.Duration;
 
@@ -33,22 +34,22 @@ public class BasePage{
     @Step("Go to Shop Page")
     public void goToShopPage() {
         shopPageLink.click();
-        WaitUtils.waitForPageLoaded(20);
+        WaitUtils.waitForPageLoaded();
         closePopupMessageIfVisible();
     }
 
     @Step("Go to Login Page")
     public void goToLoginPage() {
         loginSignupMyAccountLink.click();
-        WaitUtils.waitForPageLoaded(20);
+        WaitUtils.waitForPageLoaded();
     }
 
     @Step("Go to Cart Page")
     public void goToCartPage() {
-        WebUtils.scrollToTop();
-        WaitUtils.waitUntilClickable(cartPageLink, 5);
+        WebDriverUtils.scrollToTop();
+        WaitUtils.waitUntilClickable(cartPageLink, Constants.SHORT_WAIT);
         cartPageLink.click();
-        WaitUtils.waitForPageLoaded(20);
+        WaitUtils.waitForPageLoaded();
     }
 
     private SelenideElement getDepartmentLink(String departmentName) {
@@ -56,11 +57,11 @@ public class BasePage{
     }
 
     @Step("Select \"{department.value}\" on Department menu")
-    public void selectDepartment(Departments department) {
+    public void selectDepartment(Department department) {
         allDepartmentMenu.hover();
         SelenideElement specificDepartment = getDepartmentLink(department.getValue());
         specificDepartment.click();
-        WaitUtils.waitForPageLoaded(20);
+        WaitUtils.waitForPageLoaded();
     }
 
     public static void closePopupMessageIfVisible() {
@@ -70,7 +71,7 @@ public class BasePage{
             popupMessage.should(Condition.appear, Duration.ofSeconds(10));
             log.info("Popup is visible, attempting to close...");
             closeButton.click();
-            WaitUtils.waitForElementToDisappear(popupMessage, 10);
+            WaitUtils.waitForElementToDisappear(popupMessage, Constants.MEDIUM_WAIT);
         } catch (ElementNotFound e) {
             log.warn("Popup or close button not found in DOM.");
         } catch (UIAssertionError e) {
