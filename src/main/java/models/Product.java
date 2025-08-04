@@ -19,7 +19,7 @@ public class Product {
         this.title = title;
         this.price = price;
         this.quantity = "1";
-        updateSubTotal(); // tự động tính subtotal
+        updateSubTotal(); // Auto-calculate subtotal
     }
 
     public Product(String title, String quantity, String subTotal) {
