@@ -1,6 +1,7 @@
 package testTA;
 
 import data.enums.Department;
+import data.enums.ProductsSortingOptions;
 import jdk.jfr.Description;
 import models.BillingInfo;
 import models.Product;
@@ -135,6 +136,26 @@ public class PurchaseItemsTest extends TATestBase {
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
         softAssert.assertTrue(orderStatusPage.checkSelectedProductDisplayedOnReceipt(selectedRandomProduct,productsOnReceipt),"Selected products are not displayed on Order Status page");
         softAssert.assertAll();
+    }
 
+    @Test(dataProvider = "validAccount", dataProviderClass = TestDataProvider.class)
+    @Description("TC_014 Verify users can sort items by price")
+    public void TC_04(User validUser) {
+        mainPage.goToLoginPage();
+        loginPage.loginWithAccount(validUser);
+
+        mainPage.goToShopPage();
+        shopAndProductCategoriesPage.switchViewToList();
+
+        shopAndProductCategoriesPage.selectSortOption(ProductsSortingOptions.SORT_BY_PRICE_LOW_TO_HIGH);
+        products = shopAndProductCategoriesPage.getAllProducts();
+
+        softAssert.assertTrue(shopAndProductCategoriesPage.isProductPriceSortedAscending(products));
+
+        shopAndProductCategoriesPage.selectSortOption(ProductsSortingOptions.SORT_BY_PRICE_HIGH_TO_LOW);
+        products = shopAndProductCategoriesPage.getAllProducts();
+
+        softAssert.assertTrue(shopAndProductCategoriesPage.isProductPriceSortedDescending(products));
+        softAssert.assertAll();
     }
 }
