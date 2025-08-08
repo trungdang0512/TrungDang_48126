@@ -2,15 +2,19 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import data.enums.ProductsSortingOptions;
 import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import models.Product;
 import utils.Constants;
+import utils.StringUtils;
 import utils.WaitUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -81,4 +85,33 @@ public class ShopAndProductCategoriesPage extends BasePage{
         }
     }
 
+    @Step("Sort products by \"{optionValue}\"")
+    public void selectSortOption(ProductsSortingOptions productsSorting){
+        sortSelection.selectOption(productsSorting.displayName());
+    }
+
+    @Step("Check if product price sorted ASC")
+    public boolean isProductPriceSortedAscending(List<Product> products) {
+        List<Double> actualPrices = products.stream()
+                .map(product -> StringUtils.parsePrice(product.getPrice()))
+                .collect(Collectors.toList());
+        List<Double> sortedPrices = new ArrayList<>(actualPrices);
+        Collections.sort(sortedPrices);
+        log.info("Actual prices: {}" + actualPrices);
+        log.info("Sorted prices: {}" + sortedPrices);
+        return actualPrices.equals(sortedPrices);
+    }
+
+    @Step("Check if product price sorted DES")
+    public boolean isProductPriceSortedDescending(List<Product> products) {
+        List<Double> actualPrices = products.stream()
+                .map(product -> StringUtils.parsePrice(product.getPrice()))
+                .collect(Collectors.toList());
+
+        List<Double> sortedPrices = new ArrayList<>(actualPrices);
+        sortedPrices.sort(Collections.reverseOrder());
+        log.info("Actual prices: {}" + actualPrices);
+        log.info("Sorted prices: {}" + sortedPrices);
+        return actualPrices.equals(sortedPrices);
+    }
 }
