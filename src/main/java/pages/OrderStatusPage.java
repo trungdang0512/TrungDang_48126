@@ -72,4 +72,9 @@ public class OrderStatusPage extends BasePage {
                                 )
                 );
     }
+
+    @Step("Get order number")
+    public String getOrderNumber(){
+        return orderNumber.getText();
+    }
 }

@@ -1,15 +1,13 @@
 package utils;
 
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.SelenideWait;
-import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.*;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
@@ -67,5 +65,14 @@ public class WaitUtils {
         Selenide.Wait().withTimeout(Duration.ofSeconds(timeoutInSeconds)).until(driver ->
                 !WebDriverRunner.url().equals(currentUrl)
         );
+    }
+
+    public static void waitUntilTextsChange(ElementsCollection elements,
+                                            List<String> previousTexts,
+                                            int timeoutInSeconds) {
+        Selenide.Wait().withTimeout(Duration.ofSeconds(timeoutInSeconds)).until(driver -> {
+            List<String> currentTexts = elements.texts();
+            return !currentTexts.equals(previousTexts);
+        });
     }
 }

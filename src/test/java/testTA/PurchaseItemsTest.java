@@ -6,6 +6,7 @@ import jdk.jfr.Description;
 import models.BillingInfo;
 import models.Product;
 import models.User;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import testTA.DataProvider.TestDataProvider;
@@ -51,7 +52,7 @@ public class PurchaseItemsTest extends TATestBase {
 
         cartPage.clickOnCheckoutBtn();
 
-        softAssert.assertTrue(checkOutPage.isCheckoutPage(),"Checkout Page doesn't  display!!");
+        softAssert.assertTrue(checkOutPage.isCheckoutPage(), "Checkout Page doesn't  display!!");
 
         productsOnCheckOutPage = checkOutPage.getAllProductsOnOrder();
         softAssert.assertTrue(checkOutPage.checkSelectedProductDisplayedOnOrder(selectedRandomProduct, productsOnCheckOutPage), "Selected product is not displayed on Check out page");
@@ -60,10 +61,10 @@ public class PurchaseItemsTest extends TATestBase {
 
         checkOutPage.clickOnPlaceOrderBtnAndWait();
 
-        softAssert.assertTrue(orderStatusPage.isOrderStatusPage(),"Order Status page doesn't display!!!");
+        softAssert.assertTrue(orderStatusPage.isOrderStatusPage(), "Order Status page doesn't display!!!");
 
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
-        softAssert.assertTrue(orderStatusPage.checkSelectedProductDisplayedOnReceipt(selectedRandomProduct, productsOnReceipt),"Selected product is not displayed on Order Status page");
+        softAssert.assertTrue(orderStatusPage.checkSelectedProductDisplayedOnReceipt(selectedRandomProduct, productsOnReceipt), "Selected product is not displayed on Order Status page");
         softAssert.assertAll();
     }
 
@@ -81,15 +82,15 @@ public class PurchaseItemsTest extends TATestBase {
 
         shopAndProductCategoriesPage.goToCartPage();
         productsOnCart = cartPage.getAllProductsOnCart();
-        softAssert.assertTrue(cartPage.checkAddedProductsDisplayedOnCart(selectedProducsList,productsOnCart), "Selected products are not displayed on Cart page");
+        softAssert.assertTrue(cartPage.checkAddedProductsDisplayedOnCart(selectedProducsList, productsOnCart), "Selected products are not displayed on Cart page");
 
         cartPage.clickOnCheckoutBtn();
         checkOutPage.enterBillingDetails(validBillingInfo);
         checkOutPage.clickOnPlaceOrderBtnAndWait();
 
-        softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(),"Order Confirmation Message is not displayed");
+        softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(), "Order Confirmation Message is not displayed");
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
-        softAssert.assertTrue(orderStatusPage.checkSelectedProductsDisplayedOnReceipt(selectedProducsList,productsOnReceipt),"Selected products are not displayed on Order Status page");
+        softAssert.assertTrue(orderStatusPage.checkSelectedProductsDisplayedOnReceipt(selectedProducsList, productsOnReceipt), "Selected products are not displayed on Order Status page");
         softAssert.assertAll();
     }
 
@@ -113,9 +114,9 @@ public class PurchaseItemsTest extends TATestBase {
 
         checkOutPage.clickOnPlaceOrderBtnAndWait();
 
-        softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(),"Order Confirmation Message is not displayed");
+        softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(), "Order Confirmation Message is not displayed");
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
-        softAssert.assertTrue(orderStatusPage.checkSelectedProductDisplayedOnReceipt(selectedRandomProduct,productsOnReceipt),"Selected products are not displayed on Order Status page");
+        softAssert.assertTrue(orderStatusPage.checkSelectedProductDisplayedOnReceipt(selectedRandomProduct, productsOnReceipt), "Selected products are not displayed on Order Status page");
 
         //9. Repeat Step 3-8 with another payment method (Cash on delivery)
         mainPage.goToShopPage();
@@ -132,9 +133,9 @@ public class PurchaseItemsTest extends TATestBase {
 
         checkOutPage.clickOnPlaceOrderBtnAndWait();
 
-        softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(),"Order Confirmation Message is not displayed");
+        softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(), "Order Confirmation Message is not displayed");
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
-        softAssert.assertTrue(orderStatusPage.checkSelectedProductDisplayedOnReceipt(selectedRandomProduct,productsOnReceipt),"Selected products are not displayed on Order Status page");
+        softAssert.assertTrue(orderStatusPage.checkSelectedProductDisplayedOnReceipt(selectedRandomProduct, productsOnReceipt), "Selected products are not displayed on Order Status page");
         softAssert.assertAll();
     }
 
@@ -157,5 +158,64 @@ public class PurchaseItemsTest extends TATestBase {
 
         softAssert.assertTrue(shopAndProductCategoriesPage.isProductPriceSortedDescending(products));
         softAssert.assertAll();
+    }
+
+    @Test(dataProvider = "validAccountAndBilling", dataProviderClass = TestDataProvider.class)
+    @Description("TC05: Verify orders appear in order history")
+    public void TC_05(User validUser, BillingInfo validBillingInfo) {
+        //Pre-condition: User has placed 02 orders
+        mainPage.goToLoginPage();
+        loginPage.loginWithAccount(validUser);
+
+        mainPage.goToShopPage();
+
+        products = shopAndProductCategoriesPage.getAllProducts();
+        selectedRandomProduct = ListUtils.getRandomElement(products);
+        shopAndProductCategoriesPage.addItemToCart(selectedRandomProduct);
+        shopAndProductCategoriesPage.goToCartPage();
+
+        cartPage.clickOnCheckoutBtn();
+        checkOutPage.enterBillingDetails(validBillingInfo);
+        checkOutPage.clickOnPlaceOrderBtnAndWait();
+
+        newOrderNumbers.add(orderStatusPage.getOrderNumber());
+
+        mainPage.goToShopPage();
+
+        products = shopAndProductCategoriesPage.getAllProducts();
+        selectedRandomProduct = ListUtils.getRandomElement(products);
+        shopAndProductCategoriesPage.addItemToCart(selectedRandomProduct);
+        shopAndProductCategoriesPage.goToCartPage();
+
+        cartPage.clickOnCheckoutBtn();
+        checkOutPage.enterBillingDetails(validBillingInfo);
+        checkOutPage.clickOnPlaceOrderBtnAndWait();
+
+        newOrderNumbers.add(orderStatusPage.getOrderNumber());
+
+        //Start Step 1: Go to My Account page
+        checkOutPage.goToMyAccountPage();
+
+        myAccountPage.goToOrdersPage();
+
+        Assert.assertTrue(myAccountPage.areNewOrdersDisplayed(newOrderNumbers));
+    }
+
+    @Test(dataProvider = "validBilling", dataProviderClass = TestDataProvider.class)
+    @Description("TC06: Verify users try to buy an item without logging in (As a guest)")
+    public void TC_06(BillingInfo validBillingInfo) {
+        mainPage.goToShopPage();
+
+        products = shopAndProductCategoriesPage.getAllProducts();
+        selectedRandomProduct = ListUtils.getRandomElement(products);
+        shopAndProductCategoriesPage.addItemToCart(selectedRandomProduct);
+
+        shopAndProductCategoriesPage.goToCartPage();
+
+        cartPage.clickOnCheckoutBtn();
+        checkOutPage.enterBillingDetails(validBillingInfo);
+        checkOutPage.clickOnPlaceOrderBtnAndWait();
+
+        Assert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(),"Order Confirmation Message is not displayed");
     }
 }

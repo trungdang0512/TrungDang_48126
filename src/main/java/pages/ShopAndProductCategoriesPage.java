@@ -1,5 +1,7 @@
 package pages;
 
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import data.enums.ProductsSortingOptions;
@@ -88,6 +90,8 @@ public class ShopAndProductCategoriesPage extends BasePage{
     @Step("Sort products by \"{optionValue}\"")
     public void selectSortOption(ProductsSortingOptions productsSorting){
         sortSelection.selectOption(productsSorting.displayName());
+        sortSelection.closest("form").submit(); // submit the sortSelection form after selection
+        waitForLoaderToDisappear();
     }
 
     @Step("Check if product price sorted ASC")

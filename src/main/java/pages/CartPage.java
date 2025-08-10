@@ -6,6 +6,7 @@ import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import models.Product;
 import utils.Constants;
+import utils.ElementUtils;
 import utils.WaitUtils;
 import utils.WebDriverUtils;
 
@@ -62,6 +63,7 @@ public class CartPage extends BasePage {
 
     @Step("Click on Checkout Button")
     public void clickOnCheckoutBtn() {
+        ElementUtils.refreshIfNotLoaded(checkoutBtn, Constants.MEDIUM_WAIT);
         WebDriverUtils.scrollToTop();
         WaitUtils.waitForElementToBeVisible(checkoutBtn, Constants.MEDIUM_WAIT);
         WaitUtils.waitUntilClickable(checkoutBtn, Constants.MEDIUM_WAIT);

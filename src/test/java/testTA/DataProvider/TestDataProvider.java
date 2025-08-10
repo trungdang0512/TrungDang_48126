@@ -21,4 +21,11 @@ public class TestDataProvider {
         };
     }
 
+    @DataProvider(name = "validBilling")
+    public static Object[][] provideValidBillingDetails() {
+        BillingInfo billingInfo = BillingInfo.getBillingDetailsFromJson("validBilling");
+        return new Object[][]{
+                {billingInfo}
+        };
+    }
 }

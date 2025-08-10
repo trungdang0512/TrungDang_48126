@@ -18,6 +18,7 @@ public class TATestBase {
     CartPage cartPage = new CartPage();
     CheckOutPage checkOutPage = new CheckOutPage();
     OrderStatusPage orderStatusPage = new OrderStatusPage();
+    MyAccountPage myAccountPage = new MyAccountPage();
 
     @BeforeClass(alwaysRun = true)
     @Parameters("browser")
@@ -35,4 +36,6 @@ public class TATestBase {
         clearBrowserCookies();
         closeWebDriver();
     }
+
+
 }
