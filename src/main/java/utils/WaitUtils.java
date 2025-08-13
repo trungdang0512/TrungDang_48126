@@ -75,4 +75,10 @@ public class WaitUtils {
             return !currentTexts.equals(previousTexts);
         });
     }
+
+    public static void waitForAjaxComplete() {
+        Selenide.Wait().until(webDriver ->
+                (Long) ((JavascriptExecutor) webDriver).executeScript("return jQuery.active") == 0
+        );
+    }
 }

@@ -12,6 +12,15 @@ public class TestDataProvider {
                 {validUser}
         };
     }
+
+    @DataProvider(name = "validBilling")
+    public static Object[][] provideValidBillingDetails() {
+        BillingInfo billingInfo = BillingInfo.getBillingDetailsFromJson("validBilling");
+        return new Object[][]{
+                {billingInfo}
+        };
+    }
+
     @DataProvider(name = "validAccountAndBilling")
     public static Object[][] provideValidAccountAndBillingDetails() {
         User validUser = User.getAccountFromJson("validAccount");
@@ -21,11 +30,12 @@ public class TestDataProvider {
         };
     }
 
-    @DataProvider(name = "validBilling")
-    public static Object[][] provideValidBillingDetails() {
-        BillingInfo billingInfo = BillingInfo.getBillingDetailsFromJson("validBilling");
+    @DataProvider(name = "validAccountAndInvalidBilling")
+    public static Object[][] provideValidAccountAndInvalidBillingDetails() {
+        User validUser = User.getAccountFromJson("validAccount");
+        BillingInfo missingInfoBilling = BillingInfo.getBillingDetailsFromJson("missingInfoBilling");
         return new Object[][]{
-                {billingInfo}
+                {validUser, missingInfoBilling}
         };
     }
 }

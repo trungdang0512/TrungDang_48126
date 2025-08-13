@@ -59,7 +59,7 @@ public class PurchaseItemsTest extends TATestBase {
 
         checkOutPage.enterBillingDetails(validBillingInfo);
 
-        checkOutPage.clickOnPlaceOrderBtnAndWait();
+        checkOutPage.clickOnPlaceOrderBtn();
 
         softAssert.assertTrue(orderStatusPage.isOrderStatusPage(), "Order Status page doesn't display!!!");
 
@@ -86,7 +86,7 @@ public class PurchaseItemsTest extends TATestBase {
 
         cartPage.clickOnCheckoutBtn();
         checkOutPage.enterBillingDetails(validBillingInfo);
-        checkOutPage.clickOnPlaceOrderBtnAndWait();
+        checkOutPage.clickOnPlaceOrderBtn();
 
         softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(), "Order Confirmation Message is not displayed");
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
@@ -112,7 +112,7 @@ public class PurchaseItemsTest extends TATestBase {
         checkOutPage.enterBillingDetails(validBillingInfo);
         checkOutPage.selectCheckPaymentMethod();
 
-        checkOutPage.clickOnPlaceOrderBtnAndWait();
+        checkOutPage.clickOnPlaceOrderBtn();
 
         softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(), "Order Confirmation Message is not displayed");
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
@@ -131,7 +131,7 @@ public class PurchaseItemsTest extends TATestBase {
         checkOutPage.enterBillingDetails(validBillingInfo);
         checkOutPage.selectCODPaymentMethod();
 
-        checkOutPage.clickOnPlaceOrderBtnAndWait();
+        checkOutPage.clickOnPlaceOrderBtn();
 
         softAssert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(), "Order Confirmation Message is not displayed");
         productsOnReceipt = orderStatusPage.getAllProductsOnReceipt();
@@ -140,7 +140,7 @@ public class PurchaseItemsTest extends TATestBase {
     }
 
     @Test(dataProvider = "validAccount", dataProviderClass = TestDataProvider.class)
-    @Description("TC_014 Verify users can sort items by price")
+    @Description("TC_04 Verify users can sort items by price")
     public void TC_04(User validUser) {
         mainPage.goToLoginPage();
         loginPage.loginWithAccount(validUser);
@@ -176,7 +176,7 @@ public class PurchaseItemsTest extends TATestBase {
 
         cartPage.clickOnCheckoutBtn();
         checkOutPage.enterBillingDetails(validBillingInfo);
-        checkOutPage.clickOnPlaceOrderBtnAndWait();
+        checkOutPage.clickOnPlaceOrderBtn();
 
         newOrderNumbers.add(orderStatusPage.getOrderNumber());
 
@@ -189,7 +189,7 @@ public class PurchaseItemsTest extends TATestBase {
 
         cartPage.clickOnCheckoutBtn();
         checkOutPage.enterBillingDetails(validBillingInfo);
-        checkOutPage.clickOnPlaceOrderBtnAndWait();
+        checkOutPage.clickOnPlaceOrderBtn();
 
         newOrderNumbers.add(orderStatusPage.getOrderNumber());
 
@@ -214,8 +214,52 @@ public class PurchaseItemsTest extends TATestBase {
 
         cartPage.clickOnCheckoutBtn();
         checkOutPage.enterBillingDetails(validBillingInfo);
-        checkOutPage.clickOnPlaceOrderBtnAndWait();
+        checkOutPage.clickOnPlaceOrderBtn();
 
         Assert.assertTrue(orderStatusPage.checkConfirmationMessageDisplayed(),"Order Confirmation Message is not displayed");
+    }
+
+    @Test(dataProvider = "validAccountAndInvalidBilling", dataProviderClass = TestDataProvider.class)
+    @Description("TC07: Ensure proper error handling when mandatory fields are blank")
+    public void TC_07(User validUser, BillingInfo missingInfoBilling) {
+        mainPage.goToLoginPage();
+        loginPage.loginWithAccount(validUser);
+
+        mainPage.goToShopPage();
+
+        products = shopAndProductCategoriesPage.getAllProducts();
+        selectedRandomProduct = ListUtils.getRandomElement(products);
+        shopAndProductCategoriesPage.addItemToCart(selectedRandomProduct);
+        shopAndProductCategoriesPage.goToCartPage();
+
+        cartPage.clickOnCheckoutBtn();
+        checkOutPage.enterBillingDetails(missingInfoBilling);
+        checkOutPage.clickOnPlaceOrderBtn();
+
+        softAssert.assertTrue(checkOutPage.isCheckoutNoticeGroupDisplayed(),"Error Message is not displayed");
+        softAssert.assertTrue(checkOutPage.hasInvalidRequiredField(),"Invalid Fields are not displayed page");
+
+        softAssert.assertAll();
+    }
+
+    @Test(dataProvider = "validAccount", dataProviderClass = TestDataProvider.class)
+    @Description("TC_08 Verify users can clear the cart")
+    public void TC_08(User validUser) {
+        //Precondition: User added the items into cart
+        mainPage.goToLoginPage();
+        loginPage.loginWithAccount(validUser);
+
+        mainPage.goToShopPage();
+        products = shopAndProductCategoriesPage.getAllProducts();
+        selectedRandomProduct = ListUtils.getRandomElement(products);
+        shopAndProductCategoriesPage.addItemToCart(selectedRandomProduct);
+
+        //Start step 3
+        shopAndProductCategoriesPage.goToCartPage();
+        softAssert.assertTrue(cartPage.checkProductsDisplayedOnCart(),"No Product displayed on Cart");
+
+        cartPage.clickOnClearCartBtn();
+        softAssert.assertTrue(cartPage.isCartEmpty(), "The Cart is not empty and products still displayed");
+        softAssert.assertAll();
     }
 }

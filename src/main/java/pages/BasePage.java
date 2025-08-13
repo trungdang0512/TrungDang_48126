@@ -107,6 +107,8 @@ public class BasePage{
 
     @Step("Wait for product AJAX loader to disappear")
     public void waitForLoaderToDisappear() {
-        loader.should(Condition.disappear,Duration.ofSeconds(Constants.LONG_WAIT));
+        if (loader.exists() && loader.is(Condition.visible)) {
+            loader.shouldBe(Condition.disappear, Duration.ofSeconds(Constants.LONG_WAIT));
+        }
     }
 }

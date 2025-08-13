@@ -170,10 +170,11 @@ public class CheckOutPage extends BasePage {
         enterOrderCommentsTextBox(billingInfo.getOrderComments());
     }
 
+
     @Step("Click on PLACE ORDER")
-    public void clickOnPlaceOrderBtnAndWait() {
+    public void clickOnPlaceOrderBtn() {
         placeOrderBtn.scrollIntoView(false).click();
-        WaitUtils.waitForUrlChange(Constants.LONG_WAIT);
+        WaitUtils.waitForAjaxComplete();
     }
 
     @Step("Select Check payment method")
@@ -189,5 +190,19 @@ public class CheckOutPage extends BasePage {
     @Step("Select COD payment method")
     public void selectCODPaymentMethod() {
         codRadio.scrollIntoView(false).setSelected(true);
+    }
+
+    public boolean isCheckoutNoticeGroupDisplayed() {
+        return errorCheckoutMessage.isDisplayed();
+    }
+
+    public boolean hasInvalidRequiredField() {
+        return allFields.stream()
+                .anyMatch(field -> {
+                    String classes = field.getAttribute("class");
+                    return classes != null
+                            && classes.contains("woocommerce-invalid")
+                            && classes.contains("woocommerce-invalid-required-field");
+                });
     }
 }
