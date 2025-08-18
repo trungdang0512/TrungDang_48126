@@ -77,8 +77,32 @@ public class WaitUtils {
     }
 
     public static void waitForAjaxComplete() {
-        Selenide.Wait().until(webDriver ->
-                (Long) ((JavascriptExecutor) webDriver).executeScript("return jQuery.active") == 0
-        );
+        Selenide.Wait().withTimeout(Duration.ofSeconds(Constants.LONG_WAIT))
+                .until(webDriver ->
+                        (Long) ((JavascriptExecutor) webDriver)
+                                .executeScript("return jQuery.active") == 0
+                );
+    }
+
+    public static void waitForATime(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // reset interrupt flag
+            throw new RuntimeException("Thread was interrupted while waiting", e);
+        }
+    }
+
+    public static void waitForElementUpdate(SelenideElement element, int timeoutInSeconds) {
+        String oldText = element.getText().trim();
+
+        Selenide.Wait().withTimeout(Duration.ofSeconds(timeoutInSeconds)).until(driver -> {
+            try {
+                String newValue = element.getText().trim();
+                return !newValue.equals(oldText);
+            } catch (Exception e) {
+                return false;
+            }
+        });
     }
 }

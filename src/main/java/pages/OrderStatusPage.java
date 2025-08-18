@@ -29,12 +29,12 @@ public class OrderStatusPage extends BasePage {
 
     private Product getProductFromReceiptByIndex(int index) {
         String titleText = allProductsTitleOnReceipt.get(index).getText();
-
-        String quantityText = allProductsQuantityOnReceipt.get(index).getText().replaceAll("[^0-9]", "");
-
+        int quantity = Integer.parseInt(
+                allProductsQuantityOnReceipt.get(index).getText().replaceAll("[^0-9]", "")
+        );
         String subTotatlText = allProductsSubTotalOnReceipt.get(index).getAttribute("textContent");
 
-        return new Product(titleText, quantityText, subTotatlText);
+        return new Product(titleText, quantity, subTotatlText);
     }
 
     public List<Product> getAllProductsOnReceipt() {
@@ -44,13 +44,13 @@ public class OrderStatusPage extends BasePage {
 
         for (int i = 0; i < count; i++) {
             productList.add(getProductFromReceiptByIndex(i));
+            log.info("Purchased product on receipt: " + getProductFromReceiptByIndex(i).getProductInfo());
         }
         return productList;
     }
 
     @Step("Check if selected product displayed on Receipt")
     public boolean checkSelectedProductDisplayedOnReceipt(Product selectedProduct, List<Product> productsOnReceipt) {
-        log.info("Purchased products list: {}" + productsOnReceipt);
         return productsOnReceipt.stream()
                 .anyMatch(product -> product.equalsByTitleQuantityAndSubTotal(selectedProduct));
     }
@@ -63,7 +63,6 @@ public class OrderStatusPage extends BasePage {
 
     @Step("Check if all selected products are displayed on Receipt")
     public boolean checkSelectedProductsDisplayedOnReceipt(List<Product> selectedProducts, List<Product> productsOnReceipt) {
-        log.info("Purchased products list on receipt: {}" + productsOnReceipt);
         return selectedProducts.stream()
                 .anyMatch(selectedProduct ->
                         productsOnReceipt.stream()
@@ -74,7 +73,7 @@ public class OrderStatusPage extends BasePage {
     }
 
     @Step("Get order number")
-    public String getOrderNumber(){
+    public String getOrderNumber() {
         return orderNumber.getText();
     }
 }

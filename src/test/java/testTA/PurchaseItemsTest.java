@@ -262,4 +262,34 @@ public class PurchaseItemsTest extends TATestBase {
         softAssert.assertTrue(cartPage.isCartEmpty(), "The Cart is not empty and products still displayed");
         softAssert.assertAll();
     }
+
+    @Test(dataProvider = "validAccount", dataProviderClass = TestDataProvider.class)
+    @Description("TC_09 Verify users can update quantity of product in cart")
+    public void TC_09(User validUser) {
+        mainPage.goToLoginPage();
+        loginPage.loginWithAccount(validUser);
+
+        mainPage.goToShopPage();
+        products = shopAndProductCategoriesPage.getAllProducts();
+        selectedRandomProduct = ListUtils.getRandomElement(products);
+        shopAndProductCategoriesPage.addItemToCart(selectedRandomProduct);
+
+        shopAndProductCategoriesPage.goToCartPage();
+        softAssert.assertTrue(cartPage.verifyProductQuantityHasValue(selectedRandomProduct), "Quantit of added product does not display!");
+
+        cartPage.clickPlusBtn(selectedRandomProduct);
+        Product updatedProductAfterClickPlus = cartPage.updateProductAfterChangeQuantity(selectedRandomProduct);
+        softAssert.assertTrue(cartPage.checkQuantityAndSubtotalAfterClickPlus(selectedRandomProduct, updatedProductAfterClickPlus));
+
+        cartPage.setQuantity(selectedRandomProduct, 4);
+        cartPage.clickOnUpdateCartBtn();
+        Product updatedProductAfterSetQuantity = cartPage.updateProductAfterChangeQuantity(updatedProductAfterClickPlus);
+        softAssert.assertTrue(cartPage.checkQuantityAndSubtotalAfterEnterQuantity(updatedProductAfterSetQuantity, 4));
+
+        cartPage.clickMinusBtn(updatedProductAfterSetQuantity);
+        Product updatedProductAfterClickMinus = cartPage.updateProductAfterChangeQuantity(updatedProductAfterSetQuantity);
+        softAssert.assertTrue(cartPage.checkQuantityAndSubtotalAfterClickMinus(updatedProductAfterSetQuantity, updatedProductAfterClickMinus));
+
+        softAssert.assertAll();
+    }
 }

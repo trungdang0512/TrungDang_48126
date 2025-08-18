@@ -67,7 +67,6 @@ public class ShopAndProductCategoriesPage extends BasePage{
         for (int i = 0; i < count; i++) {
             products.add(getProductFromPageByIndex(i));
         }
-        log.info("Products list on Page: {}" + products);
         return products;
     }
 
@@ -81,9 +80,9 @@ public class ShopAndProductCategoriesPage extends BasePage{
 
     @Step("Add multiple items to cart")
     public void addMutipleItemsToCart(List<Product> products) {
-        log.info("Selected Products: {}" + products.toString());
         for (Product product : products) {
             addItemToCart(product);
+            log.info("Selected Product: " + product.getProductInfo());
         }
     }
 
