@@ -5,16 +5,19 @@ import data.enums.ProductsSortingOptions;
 import jdk.jfr.Description;
 import models.BillingInfo;
 import models.Product;
+import models.Review;
 import models.User;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import testTA.DataProvider.TestDataProvider;
 import utils.ListUtils;
+import utils.LoremIpsumGenerator;
+import utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class PurchaseItemsTest extends TATestBase {
 
     List<Product> selectedProducsList;
@@ -289,6 +292,31 @@ public class PurchaseItemsTest extends TATestBase {
         cartPage.clickMinusBtn(updatedProductAfterSetQuantity);
         Product updatedProductAfterClickMinus = cartPage.updateProductAfterChangeQuantity(updatedProductAfterSetQuantity);
         softAssert.assertTrue(cartPage.checkQuantityAndSubtotalAfterClickMinus(updatedProductAfterSetQuantity, updatedProductAfterClickMinus));
+
+        softAssert.assertAll();
+    }
+
+    @Test(dataProvider = "validAccount", dataProviderClass = TestDataProvider.class)
+    @Description("TC_10 Verify users can post a review")
+    public void TC_10(User validUser) {
+        mainPage.goToLoginPage();
+        loginPage.loginWithAccount(validUser);
+
+        mainPage.goToShopPage();
+        products = shopAndProductCategoriesPage.getAllProducts();
+        selectedRandomProduct = ListUtils.getRandomElement(products);
+        shopAndProductCategoriesPage.goToProductDetailPage(selectedRandomProduct);
+
+        productDetailPage.clickOnReviewsTabLink();
+        Review newReview = new Review(StringUtils.generateRandomNumber(5), LoremIpsumGenerator.generateLoremIpsum());
+        int reviewNumberBeforeSubmit = productDetailPage.getNumberOfReviews();
+
+        productDetailPage.submitAReview(newReview);
+        Review postedReview = productDetailPage.getLatestReview();
+        int reviewNumberAfterSubmit = productDetailPage.getNumberOfReviews();
+
+        softAssert.assertTrue(productDetailPage.checkPostedReviewAreCorrect(newReview, postedReview), "Posted review is not correct");
+        softAssert.assertTrue(productDetailPage.checkReviewNumberAfterSubmit(reviewNumberBeforeSubmit, reviewNumberAfterSubmit), "Number of review is not updated");
 
         softAssert.assertAll();
     }

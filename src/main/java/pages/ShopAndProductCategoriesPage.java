@@ -1,7 +1,5 @@
 package pages;
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import data.enums.ProductsSortingOptions;
@@ -32,6 +30,7 @@ public class ShopAndProductCategoriesPage extends BasePage{
     private final SelenideElement sortSelection = $x("//select[@name='orderby']");
 
     private final String addToCartLink = "//div[@class='text-center product-details']/a[@data-product_name='%s']";
+    private final String productDetailLink = "//div[@class='text-center product-details']//h2[@class='product-title']/a[normalize-space(text())='%s']";
 
     @Step("Switch view to list")
     public void switchViewToList(){
@@ -76,6 +75,15 @@ public class ShopAndProductCategoriesPage extends BasePage{
         WaitUtils.waitForElementToBeVisible(addToCartLinkOfSelectedItem,Constants.SHORT_WAIT);
         WaitUtils.waitUntilClickable(addToCartLinkOfSelectedItem, Constants.SHORT_WAIT);
         addToCartLinkOfSelectedItem.scrollIntoView(false).click();
+        WaitUtils.waitForAjaxComplete();
+    }
+
+    @Step("Go to Product detail page")
+    public void goToProductDetailPage(Product product){
+        SelenideElement productDetailPageLinkOfSelectedItem = $x(String.format(productDetailLink, product.getTitle()));
+        WaitUtils.waitForElementToBeVisible(productDetailPageLinkOfSelectedItem,Constants.SHORT_WAIT);
+        WaitUtils.waitUntilClickable(productDetailPageLinkOfSelectedItem, Constants.SHORT_WAIT);
+        productDetailPageLinkOfSelectedItem.scrollIntoView(false).click();
     }
 
     @Step("Add multiple items to cart")

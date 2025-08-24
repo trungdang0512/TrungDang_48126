@@ -61,3 +61,6 @@ IntelliJ IDEA Community Edition (download here: https://www.jetbrains.com/idea/d
 + Configuration: pom.xml: Dependencies, Commandline
 + Code: Name convention, OOP, Json, Data driven
 + Report: Allure report
+
+#### FINAL RESULT
+![img.png](src/main/resources/Final_result.jpg)

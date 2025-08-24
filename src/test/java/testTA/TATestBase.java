@@ -2,15 +2,15 @@ package testTA;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import config.BrowserConfig;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.testng.annotations.*;
 import pages.*;
 import utils.Constants;
 
 import static com.codeborne.selenide.Selenide.*;
-
+@Listeners({io.qameta.allure.testng.AllureTestNg.class})
 public class TATestBase {
     MainPage mainPage = new MainPage();
     LoginPage loginPage = new LoginPage();
@@ -19,10 +19,15 @@ public class TATestBase {
     CheckOutPage checkOutPage = new CheckOutPage();
     OrderStatusPage orderStatusPage = new OrderStatusPage();
     MyAccountPage myAccountPage = new MyAccountPage();
+    ProductDetailPage productDetailPage = new ProductDetailPage();
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     @Parameters("browser")
     public void setUp(String browser) {
+        SelenideLogger.removeListener("AllureSelenide");
+
+        SelenideLogger.addListener("AllureSelenide",
+                new AllureSelenide().screenshots(true).savePageSource(true).includeSelenideSteps(false));
         BrowserConfig.setupBrowser(browser, 5000);
         open(Constants.TA_URL);
         WebDriverRunner.getWebDriver().manage().window().maximize();
@@ -31,7 +36,7 @@ public class TATestBase {
         Configuration.reportsFolder = "allure-results";
     }
 
-    @AfterClass(alwaysRun = true)
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
         clearBrowserCookies();
         closeWebDriver();

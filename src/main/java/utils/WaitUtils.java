@@ -47,6 +47,20 @@ public class WaitUtils {
         });
     }
 
+    public static void waitForElementExist(SelenideElement element, int timeoutInSeconds) {
+        WebDriver driver = getWebDriver();
+        SelenideWait wait = new SelenideWait(driver, timeoutInSeconds * 1000L, 500);
+
+        wait.until(driver1 -> {
+            try {
+                return element.exists();
+            } catch (Exception e) {
+                return false;
+            }
+        });
+    }
+
+
     public static void waitForElementToDisappear(SelenideElement element, int timeoutInSeconds) {
         WebDriver driver = WebDriverRunner.getWebDriver();
         SelenideWait wait = new SelenideWait(driver, timeoutInSeconds * 1000L, 200);
@@ -60,20 +74,11 @@ public class WaitUtils {
         });
     }
 
-    public static void waitForUrlChange(int timeoutInSeconds){
+    public static void waitForUrlChange(int timeoutInSeconds) {
         String currentUrl = WebDriverRunner.url();
         Selenide.Wait().withTimeout(Duration.ofSeconds(timeoutInSeconds)).until(driver ->
                 !WebDriverRunner.url().equals(currentUrl)
         );
-    }
-
-    public static void waitUntilTextsChange(ElementsCollection elements,
-                                            List<String> previousTexts,
-                                            int timeoutInSeconds) {
-        Selenide.Wait().withTimeout(Duration.ofSeconds(timeoutInSeconds)).until(driver -> {
-            List<String> currentTexts = elements.texts();
-            return !currentTexts.equals(previousTexts);
-        });
     }
 
     public static void waitForAjaxComplete() {
