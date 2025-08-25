@@ -28,6 +28,7 @@ public class BasePage{
 
     private static final SelenideElement cookieNotice = $("#cookie-notice");
     private static final SelenideElement acceptButton = $("#cn-accept-cookie");
+    private final SelenideElement loader = $x("//div[contains(@class, 'et-loader') and contains(@class, 'product-ajax')]");
 
     private final String departmentLink = "//ul[@id='menu-all-departments-1']/li/a[contains(text(), '%s')]";
 
@@ -50,6 +51,11 @@ public class BasePage{
         WaitUtils.waitUntilClickable(cartPageLink, Constants.SHORT_WAIT);
         cartPageLink.click();
         WaitUtils.waitForPageLoaded();
+    }
+
+    public void goToMyAccountPage(){
+        loginSignupMyAccountLink.click();
+        WaitUtils.waitForPageLoaded(20);
     }
 
     private SelenideElement getDepartmentLink(String departmentName) {
@@ -96,6 +102,13 @@ public class BasePage{
             }
         } else {
             log.info("No cookie notice present.");
+        }
+    }
+
+    @Step("Wait for product AJAX loader to disappear")
+    public void waitForLoaderToDisappear() {
+        if (loader.exists() && loader.is(Condition.visible)) {
+            loader.shouldBe(Condition.disappear, Duration.ofSeconds(Constants.LONG_WAIT));
         }
     }
 }

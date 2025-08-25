@@ -1,15 +1,13 @@
 package utils;
 
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.SelenideWait;
-import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.*;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
@@ -49,6 +47,20 @@ public class WaitUtils {
         });
     }
 
+    public static void waitForElementExist(SelenideElement element, int timeoutInSeconds) {
+        WebDriver driver = getWebDriver();
+        SelenideWait wait = new SelenideWait(driver, timeoutInSeconds * 1000L, 500);
+
+        wait.until(driver1 -> {
+            try {
+                return element.exists();
+            } catch (Exception e) {
+                return false;
+            }
+        });
+    }
+
+
     public static void waitForElementToDisappear(SelenideElement element, int timeoutInSeconds) {
         WebDriver driver = WebDriverRunner.getWebDriver();
         SelenideWait wait = new SelenideWait(driver, timeoutInSeconds * 1000L, 200);
@@ -62,10 +74,40 @@ public class WaitUtils {
         });
     }
 
-    public static void waitForUrlChange(int timeoutInSeconds){
+    public static void waitForUrlChange(int timeoutInSeconds) {
         String currentUrl = WebDriverRunner.url();
         Selenide.Wait().withTimeout(Duration.ofSeconds(timeoutInSeconds)).until(driver ->
                 !WebDriverRunner.url().equals(currentUrl)
         );
+    }
+
+    public static void waitForAjaxComplete() {
+        Selenide.Wait().withTimeout(Duration.ofSeconds(Constants.LONG_WAIT))
+                .until(webDriver ->
+                        (Long) ((JavascriptExecutor) webDriver)
+                                .executeScript("return jQuery.active") == 0
+                );
+    }
+
+    public static void waitForATime(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // reset interrupt flag
+            throw new RuntimeException("Thread was interrupted while waiting", e);
+        }
+    }
+
+    public static void waitForElementUpdate(SelenideElement element, int timeoutInSeconds) {
+        String oldText = element.getText().trim();
+
+        Selenide.Wait().withTimeout(Duration.ofSeconds(timeoutInSeconds)).until(driver -> {
+            try {
+                String newValue = element.getText().trim();
+                return !newValue.equals(oldText);
+            } catch (Exception e) {
+                return false;
+            }
+        });
     }
 }

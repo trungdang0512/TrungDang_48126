@@ -2,15 +2,19 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import data.enums.ProductsSortingOptions;
 import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import models.Product;
 import utils.Constants;
+import utils.StringUtils;
 import utils.WaitUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -26,6 +30,7 @@ public class ShopAndProductCategoriesPage extends BasePage{
     private final SelenideElement sortSelection = $x("//select[@name='orderby']");
 
     private final String addToCartLink = "//div[@class='text-center product-details']/a[@data-product_name='%s']";
+    private final String productDetailLink = "//div[@class='text-center product-details']//h2[@class='product-title']/a[normalize-space(text())='%s']";
 
     @Step("Switch view to list")
     public void switchViewToList(){
@@ -61,7 +66,6 @@ public class ShopAndProductCategoriesPage extends BasePage{
         for (int i = 0; i < count; i++) {
             products.add(getProductFromPageByIndex(i));
         }
-        log.info("Products list on Page: {}" + products);
         return products;
     }
 
@@ -71,14 +75,54 @@ public class ShopAndProductCategoriesPage extends BasePage{
         WaitUtils.waitForElementToBeVisible(addToCartLinkOfSelectedItem,Constants.SHORT_WAIT);
         WaitUtils.waitUntilClickable(addToCartLinkOfSelectedItem, Constants.SHORT_WAIT);
         addToCartLinkOfSelectedItem.scrollIntoView(false).click();
+        WaitUtils.waitForAjaxComplete();
+    }
+
+    @Step("Go to Product detail page")
+    public void goToProductDetailPage(Product product){
+        SelenideElement productDetailPageLinkOfSelectedItem = $x(String.format(productDetailLink, product.getTitle()));
+        WaitUtils.waitForElementToBeVisible(productDetailPageLinkOfSelectedItem,Constants.SHORT_WAIT);
+        WaitUtils.waitUntilClickable(productDetailPageLinkOfSelectedItem, Constants.SHORT_WAIT);
+        productDetailPageLinkOfSelectedItem.scrollIntoView(false).click();
     }
 
     @Step("Add multiple items to cart")
     public void addMutipleItemsToCart(List<Product> products) {
-        log.info("Selected Products: {}" + products.toString());
         for (Product product : products) {
             addItemToCart(product);
+            log.info("Selected Product: " + product.getProductInfo());
         }
     }
 
+    @Step("Sort products by \"{optionValue}\"")
+    public void selectSortOption(ProductsSortingOptions productsSorting){
+        sortSelection.selectOption(productsSorting.displayName());
+        sortSelection.closest("form").submit(); // submit the sortSelection form after selection
+        waitForLoaderToDisappear();
+    }
+
+    @Step("Check if product price sorted ASC")
+    public boolean isProductPriceSortedAscending(List<Product> products) {
+        List<Double> actualPrices = products.stream()
+                .map(product -> StringUtils.parsePrice(product.getPrice()))
+                .collect(Collectors.toList());
+        List<Double> sortedPrices = new ArrayList<>(actualPrices);
+        Collections.sort(sortedPrices);
+        log.info("Actual prices: {}" + actualPrices);
+        log.info("Sorted prices: {}" + sortedPrices);
+        return actualPrices.equals(sortedPrices);
+    }
+
+    @Step("Check if product price sorted DES")
+    public boolean isProductPriceSortedDescending(List<Product> products) {
+        List<Double> actualPrices = products.stream()
+                .map(product -> StringUtils.parsePrice(product.getPrice()))
+                .collect(Collectors.toList());
+
+        List<Double> sortedPrices = new ArrayList<>(actualPrices);
+        sortedPrices.sort(Collections.reverseOrder());
+        log.info("Actual prices: {}" + actualPrices);
+        log.info("Sorted prices: {}" + sortedPrices);
+        return actualPrices.equals(sortedPrices);
+    }
 }

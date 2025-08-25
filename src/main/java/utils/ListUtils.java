@@ -17,7 +17,7 @@ public class ListUtils {
 
     public static <T> T getRandomElement(List<T> list) {
         if (list == null || list.isEmpty()) {
-            throw new IllegalArgumentException("List không được rỗng");
+            throw new IllegalArgumentException("List does not empty!");
         }
         int randomIndex = RANDOM.nextInt(list.size());
         return list.get(randomIndex);
