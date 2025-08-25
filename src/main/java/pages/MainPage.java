@@ -6,4 +6,5 @@ import static com.codeborne.selenide.Selenide.title;
 
 public class MainPage extends BasePage{
 
+
 }
