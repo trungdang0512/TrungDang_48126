@@ -28,5 +28,4 @@ public class BillingInfo {
     public static BillingInfo getBillingDetailsFromJson(String key) {
         return JsonUtils.to(ConfigFiles.get(VALID_BILLING_DETAILS), key, BillingInfo.class);
     }
-
 }

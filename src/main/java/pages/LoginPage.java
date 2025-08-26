@@ -20,7 +20,7 @@ public class LoginPage extends BasePage{
         loginBtn.click();
     }
 
-    @Step("Login with account")
+    @Step("Login with account: {user.username}")
     public void loginWithAccount(User user){
         enterLoginInfo(user);
         clickLoginButton();

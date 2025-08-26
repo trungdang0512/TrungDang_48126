@@ -53,9 +53,11 @@ public class CheckOutPage extends BasePage {
 
     private Product getProductFromOrderByIndex(int index) {
         String titleText = allProductsTitleOnOrder.get(index).getText().split("×")[0].trim();
-        String quantityText = allProductsQuantityOnOrder.get(index).getText().replaceAll("[^0-9]", "");
+        int quantity = Integer.parseInt(
+                allProductsQuantityOnOrder.get(index).getText().replaceAll("[^0-9]", "")
+        );
         String subTotalText = allProductsSubTotalOnOrder.get(index).getAttribute("textContent");
-        return new Product(titleText, quantityText, subTotalText);
+        return new Product(titleText, quantity, subTotalText);
     }
 
     public List<Product> getAllProductsOnOrder() {
@@ -63,8 +65,8 @@ public class CheckOutPage extends BasePage {
         int count = Math.min(allProductsTitleOnOrder.size(), allProductsQuantityOnOrder.size());
         for (int i = 0; i < count; i++) {
             productList.add(getProductFromOrderByIndex(i));
+            log.info("Product on Order: " + getProductFromOrderByIndex(i).getProductInfo());
         }
-        log.info("Products list on Order: {}" + productList);
         return productList;
     }
 
@@ -170,10 +172,11 @@ public class CheckOutPage extends BasePage {
         enterOrderCommentsTextBox(billingInfo.getOrderComments());
     }
 
+
     @Step("Click on PLACE ORDER")
-    public void clickOnPlaceOrderBtnAndWait() {
+    public void clickOnPlaceOrderBtn() {
         placeOrderBtn.scrollIntoView(false).click();
-        WaitUtils.waitForUrlChange(Constants.LONG_WAIT);
+        WaitUtils.waitForAjaxComplete();
     }
 
     @Step("Select Check payment method")
@@ -189,5 +192,19 @@ public class CheckOutPage extends BasePage {
     @Step("Select COD payment method")
     public void selectCODPaymentMethod() {
         codRadio.scrollIntoView(false).setSelected(true);
+    }
+
+    public boolean isCheckoutNoticeGroupDisplayed() {
+        return errorCheckoutMessage.isDisplayed();
+    }
+
+    public boolean hasInvalidRequiredField() {
+        return allFields.stream()
+                .anyMatch(field -> {
+                    String classes = field.getAttribute("class");
+                    return classes != null
+                            && classes.contains("woocommerce-invalid")
+                            && classes.contains("woocommerce-invalid-required-field");
+                });
     }
 }
